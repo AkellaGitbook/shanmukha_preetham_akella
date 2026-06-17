@@ -68,6 +68,25 @@ body.fr [data-fr]{display:inline;}
 .h-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--mid);margin-top:3px;}
 @keyframes su{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
 
+/* HERO ORBIT INDEX */
+.hero-orbit{position:absolute;right:5%;top:50%;width:360px;height:360px;transform:translateY(-50%);z-index:3;opacity:0;animation:su .8s .8s forwards;}
+@media(max-width:1200px){.hero-orbit{display:none;}}
+.orbit-ring{position:absolute;inset:0;border:1px solid var(--border-light);border-radius:50%;}
+.orbit-ring::before{content:'';position:absolute;inset:26px;border:1px dashed rgba(200,255,0,.16);border-radius:50%;animation:orbspin 70s linear infinite;}
+.orbit-ring::after{content:'';position:absolute;inset:62px;border:1px solid var(--border);border-radius:50%;}
+@keyframes orbspin{to{transform:rotate(360deg);}}
+.orbit-sweep{position:absolute;inset:26px;border-radius:50%;background:conic-gradient(from 0deg,rgba(200,255,0,.14),rgba(200,255,0,0) 80deg);animation:orbspin 7s linear infinite;pointer-events:none;}
+.orbit-hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:154px;height:154px;border-radius:50%;background:rgba(8,8,8,.82);border:1px solid var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 14px;transition:border-color .25s;pointer-events:none;}
+.hero-orbit.hot .orbit-hub{border-color:rgba(200,255,0,.5);}
+.orbit-hub-num{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.3em;color:var(--lime);margin-bottom:6px;min-height:13px;}
+.orbit-hub-lbl{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:.95;letter-spacing:.03em;color:var(--white);}
+.orbit-hub-sub{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--mid);margin-top:7px;}
+.orbit-node{position:absolute;width:30px;height:30px;transform:translate(-50%,-50%);text-decoration:none;display:grid;place-items:center;}
+.orbit-node .on-dot{width:9px;height:9px;border-radius:50%;background:var(--mid);border:1px solid var(--border-light);transition:all .22s;}
+.orbit-node .on-num{position:absolute;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:.04em;color:var(--mid);transition:color .22s;pointer-events:none;}
+.orbit-node:hover .on-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 14px rgba(200,255,0,.7);transform:scale(1.45);}
+.orbit-node:hover .on-num{color:var(--lime);}
+
 /* SECTION */
 .sec{padding:88px 48px;max-width:1200px;margin:0 auto;}
 .s-lbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--lime);display:block;margin-bottom:14px;}
@@ -316,6 +335,15 @@ body.fr [data-fr]{display:inline;}
         <a class="btn-g" href="https://www.linkedin.com/in/shanmukha-preetham-akella-579a81167/" target="_blank">LinkedIn ↗</a>
       </div>
     </div>
+    <nav class="hero-orbit" id="heroOrbit" aria-label="Section index">
+      <div class="orbit-ring"></div>
+      <div class="orbit-sweep"></div>
+      <div class="orbit-hub">
+        <div class="orbit-hub-num" id="orbitNum"></div>
+        <div class="orbit-hub-lbl" id="orbitLbl"><span data-en>INDEX</span><span data-fr>INDEX</span></div>
+        <div class="orbit-hub-sub" id="orbitSub"><span data-en>Explore · tap a node</span><span data-fr>Explorez · cliquez un point</span></div>
+      </div>
+    </nav>
   </div>
   <div class="hero-bottom">
     <div class="h-stat" style="--d:0s"><div class="h-num">6<span class="u">mo</span></div><div class="h-lbl"><span data-en>Industry Experience</span><span data-fr>Expérience Industrie</span></div></div>
@@ -746,6 +774,66 @@ if (sk) skObs.observe(sk);
   carousel.addEventListener('mouseleave', start);
 
   start();
+})();
+
+// HERO ORBIT INDEX
+(function() {
+  var orbit = document.getElementById('heroOrbit');
+  if (!orbit) return;
+  var sections = [
+    { id: 'journey',        en: 'Journey',      fr: 'Parcours' },
+    { id: 'education',       en: 'Education',    fr: 'Formation' },
+    { id: 'flowsheet',       en: 'FlowSheet',    fr: 'FlowSheet' },
+    { id: 'projects',        en: 'Projects',     fr: 'Projets' },
+    { id: 'skills',          en: 'Skills',       fr: 'Compétences' },
+    { id: 'books',           en: 'Reading',      fr: 'Lectures' },
+    { id: 'publication',     en: 'Publication',  fr: 'Publication' },
+    { id: 'certifications',  en: 'Certificates', fr: 'Certificats' },
+    { id: 'contact',         en: 'Contact',      fr: 'Contact' }
+  ];
+  var R = 180, rDot = 148, rNum = 170, n = sections.length;
+  var hub = orbit.querySelector('.orbit-hub');
+  var numEl = document.getElementById('orbitNum');
+  var lblEl = document.getElementById('orbitLbl');
+  var subEl = document.getElementById('orbitSub');
+  var isFr = function() { return document.body.classList.contains('fr'); };
+
+  function resetHub() {
+    orbit.classList.remove('hot');
+    numEl.textContent = '';
+    lblEl.textContent = 'INDEX';
+    subEl.textContent = isFr() ? 'Explorez · ' + n + ' sections' : 'Explore · ' + n + ' sections';
+  }
+  function setHub(s, i) {
+    orbit.classList.add('hot');
+    numEl.textContent = (i + 1 < 10 ? '0' : '') + (i + 1) + ' / ' + (n < 10 ? '0' : '') + n;
+    lblEl.textContent = (isFr() ? s.fr : s.en).toUpperCase();
+    subEl.textContent = isFr() ? 'Aller à la section →' : 'Jump to section →';
+  }
+
+  sections.forEach(function(s, i) {
+    var ang = (-90 + i * (360 / n)) * Math.PI / 180;
+    var x = R + rDot * Math.cos(ang);
+    var y = R + rDot * Math.sin(ang);
+    var a = document.createElement('a');
+    a.className = 'orbit-node';
+    a.href = '#' + s.id;
+    a.style.left = x + 'px';
+    a.style.top = y + 'px';
+    a.setAttribute('aria-label', s.en);
+    var dot = document.createElement('span'); dot.className = 'on-dot';
+    var num = document.createElement('span'); num.className = 'on-num';
+    num.textContent = (i + 1 < 10 ? '0' : '') + (i + 1);
+    var ox = (rNum - rDot) * Math.cos(ang), oy = (rNum - rDot) * Math.sin(ang);
+    num.style.transform = 'translate(' + ox + 'px,' + oy + 'px)';
+    a.appendChild(dot); a.appendChild(num);
+    a.addEventListener('mouseenter', function() { setHub(s, i); });
+    a.addEventListener('focus', function() { setHub(s, i); });
+    a.addEventListener('mouseleave', resetHub);
+    a.addEventListener('blur', resetHub);
+    orbit.appendChild(a);
+  });
+  resetHub();
 })();
 </script>
 

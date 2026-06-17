@@ -69,23 +69,25 @@ body.fr [data-fr]{display:inline;}
 @keyframes su{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
 
 /* HERO ORBIT INDEX */
-.hero-orbit{position:absolute;right:5%;top:50%;width:360px;height:360px;transform:translateY(-50%);z-index:3;opacity:0;animation:su .8s .8s forwards;}
+.hero-orbit{position:absolute;left:75%;top:50%;width:420px;height:420px;transform:translate(-50%,-50%);z-index:3;opacity:0;animation:orbfade .8s .8s forwards;}
 @media(max-width:1200px){.hero-orbit{display:none;}}
+@keyframes orbfade{to{opacity:1;}}
 .orbit-ring{position:absolute;inset:0;border:1px solid var(--border-light);border-radius:50%;}
-.orbit-ring::before{content:'';position:absolute;inset:26px;border:1px dashed rgba(200,255,0,.16);border-radius:50%;animation:orbspin 70s linear infinite;}
-.orbit-ring::after{content:'';position:absolute;inset:62px;border:1px solid var(--border);border-radius:50%;}
+.orbit-ring::before{content:'';position:absolute;inset:30px;border:1px dashed rgba(200,255,0,.16);border-radius:50%;animation:orbspin 70s linear infinite;}
+.orbit-ring::after{content:'';position:absolute;inset:78px;border:1px solid var(--border);border-radius:50%;}
 @keyframes orbspin{to{transform:rotate(360deg);}}
-.orbit-sweep{position:absolute;inset:26px;border-radius:50%;background:conic-gradient(from 0deg,rgba(200,255,0,.14),rgba(200,255,0,0) 80deg);animation:orbspin 7s linear infinite;pointer-events:none;}
-.orbit-hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:154px;height:154px;border-radius:50%;background:rgba(8,8,8,.82);border:1px solid var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 14px;transition:border-color .25s;pointer-events:none;}
+.orbit-sweep{position:absolute;inset:30px;border-radius:50%;background:conic-gradient(from 0deg,rgba(200,255,0,.12),rgba(200,255,0,0) 80deg);animation:orbspin 7s linear infinite;pointer-events:none;}
+.orbit-hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:150px;height:150px;border-radius:50%;background:rgba(8,8,8,.85);border:1px solid var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 12px;transition:border-color .25s;pointer-events:none;}
 .hero-orbit.hot .orbit-hub{border-color:rgba(200,255,0,.5);}
 .orbit-hub-num{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.3em;color:var(--lime);margin-bottom:6px;min-height:13px;}
-.orbit-hub-lbl{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:.95;letter-spacing:.03em;color:var(--white);}
-.orbit-hub-sub{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--mid);margin-top:7px;}
-.orbit-node{position:absolute;width:30px;height:30px;transform:translate(-50%,-50%);text-decoration:none;display:grid;place-items:center;}
-.orbit-node .on-dot{width:9px;height:9px;border-radius:50%;background:var(--mid);border:1px solid var(--border-light);transition:all .22s;}
-.orbit-node .on-num{position:absolute;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:.04em;color:var(--mid);transition:color .22s;pointer-events:none;}
-.orbit-node:hover .on-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 14px rgba(200,255,0,.7);transform:scale(1.45);}
-.orbit-node:hover .on-num{color:var(--lime);}
+.orbit-hub-lbl{font-family:'Bebas Neue',sans-serif;font-size:27px;line-height:.95;letter-spacing:.03em;color:var(--white);}
+.orbit-hub-sub{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--mid);margin-top:7px;}
+.orbit-node{position:absolute;display:flex;align-items:center;gap:7px;transform:translate(-50%,-50%);text-decoration:none;white-space:nowrap;}
+.orbit-node.flip{flex-direction:row-reverse;}
+.orbit-node .on-dot{width:7px;height:7px;border-radius:50%;background:var(--mid);border:1px solid var(--border-light);transition:all .22s;flex:none;}
+.orbit-node .on-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--off-white);transition:color .22s;}
+.orbit-node:hover .on-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 12px rgba(200,255,0,.7);transform:scale(1.4);}
+.orbit-node:hover .on-lbl{color:var(--lime);}
 
 /* SECTION */
 .sec{padding:88px 48px;max-width:1200px;margin:0 auto;}
@@ -791,8 +793,7 @@ if (sk) skObs.observe(sk);
     { id: 'certifications',  en: 'Certificates', fr: 'Certificats' },
     { id: 'contact',         en: 'Contact',      fr: 'Contact' }
   ];
-  var R = 180, rDot = 148, rNum = 170, n = sections.length;
-  var hub = orbit.querySelector('.orbit-hub');
+  var R = 210, rItem = 150, n = sections.length;
   var numEl = document.getElementById('orbitNum');
   var lblEl = document.getElementById('orbitLbl');
   var subEl = document.getElementById('orbitSub');
@@ -813,20 +814,18 @@ if (sk) skObs.observe(sk);
 
   sections.forEach(function(s, i) {
     var ang = (-90 + i * (360 / n)) * Math.PI / 180;
-    var x = R + rDot * Math.cos(ang);
-    var y = R + rDot * Math.sin(ang);
+    var x = R + rItem * Math.cos(ang);
+    var y = R + rItem * Math.sin(ang);
     var a = document.createElement('a');
-    a.className = 'orbit-node';
+    a.className = 'orbit-node' + (Math.cos(ang) > 0.05 ? ' flip' : '');
     a.href = '#' + s.id;
     a.style.left = x + 'px';
     a.style.top = y + 'px';
     a.setAttribute('aria-label', s.en);
     var dot = document.createElement('span'); dot.className = 'on-dot';
-    var num = document.createElement('span'); num.className = 'on-num';
-    num.textContent = (i + 1 < 10 ? '0' : '') + (i + 1);
-    var ox = (rNum - rDot) * Math.cos(ang), oy = (rNum - rDot) * Math.sin(ang);
-    num.style.transform = 'translate(' + ox + 'px,' + oy + 'px)';
-    a.appendChild(dot); a.appendChild(num);
+    var lbl = document.createElement('span'); lbl.className = 'on-lbl';
+    lbl.innerHTML = '<span data-en>' + s.en + '</span><span data-fr>' + s.fr + '</span>';
+    a.appendChild(dot); a.appendChild(lbl);
     a.addEventListener('mouseenter', function() { setHub(s, i); });
     a.addEventListener('focus', function() { setHub(s, i); });
     a.addEventListener('mouseleave', resetHub);
@@ -834,6 +833,18 @@ if (sk) skObs.observe(sk);
     orbit.appendChild(a);
   });
   resetHub();
+
+  // Align the dial vertically with the name block (raised slightly)
+  function placeOrbit() {
+    var main = document.querySelector('.hero-main');
+    var nameEl = document.querySelector('.hero-name');
+    if (!main || !nameEl) return;
+    var mr = main.getBoundingClientRect(), nr = nameEl.getBoundingClientRect();
+    orbit.style.top = ((nr.top - mr.top) + nr.height / 2) + 'px';
+  }
+  placeOrbit();
+  window.addEventListener('resize', placeOrbit);
+  window.addEventListener('load', placeOrbit);
 })();
 </script>
 
